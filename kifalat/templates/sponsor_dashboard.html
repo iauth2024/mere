@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Dashboard</title>
+    
+    <!-- Add your CSS styles -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #dashboard-table-container {
+            margin-top: 20px;
+            overflow-x: auto; /* Add horizontal scroll if needed */
+        }
+
+        #dashboard-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #dashboard-table th, #dashboard-table td {
+            text-align: center;
+            padding: 8px;
+            border: 1px solid #ddd;
+        }
+
+        #dashboard-table th {
+            background-color: #f2f2f2;
+        }
+
+        #search-input {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sponsor Dashboard for Kafeel ID {{ kafeel.number }}</h1>
+    
+    <h2>Kafeel Name: {{ kafeel.name }}</h2>
+    
+    <!-- Add a search input field -->
+    <input type="text" id="search-input" placeholder="Search by student name">
+
+    <div id="dashboard-table-container">
+        <table id="dashboard-table">
+            <thead>
+                <tr>
+                    <th>Admission Number</th>
+                    <th>Student Name</th>
+                    <th>Total Fees</th>
+                    <th>Total Amount Paid</th>
+                    <th>Due Amount</th>
+                    <th>Student Status</th>
+                    <th>Sponsoring Since</th>
+                    <th>Receipt Number</th>
+                    <th>Study Report</th>
+                    <th>Submission Date</th>
+                    <!-- Add more th elements for additional fields -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Inside the tbody section -->
+{% for student in dashboard_data %}
+<tr>
+    <td>{{ student.admission_number }}</td>
+    <td>{{ student.name }}</td>
+    <td>{{ student.total_fees }}</td>
+    <td style="background-color: lightgreen;">{{ student.total_paid }}</td>
+    <td style="background-color: red; color: white;">{{ student.due_amount }}</td>
+    <td>{{ student.status }}</td>
+    <td>{{ student.sponsoring_since }}</td>
+    <td>{{ student.receipt_number }}</td>
+    <td>{{ student.study_report }}</td>
+    <td>{{ student.submission_date }}</td>
+</tr>
+
+<!-- Display progress-related fields in separate rows -->
+{% for progress in student.progress_data %}
+    <tr>
+        <td colspan="7"></td> <!-- Empty columns for student information -->
+        <td {{ progress.amount_paid }}</td>
+        <td {{ progress.due_amount }}</td>
+        <td>{{ progress.receipt_number }}</td>
+        <td>{{ progress.study_report }}</td>
+        <td>{{ progress.paid_date|date:"F Y" }}</td>
+        <!-- Add more td elements for additional progress fields -->
+    </tr>
+{% endfor %}
+{% endfor %}
+
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add your JavaScript code -->
+    <script>
+        // Function to filter table rows based on search input
+        function filterTable() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("search-input");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("dashboard-table");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1]; // Column index 1 is for student name
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Attach the filter function to the input field
+        document.getElementById("search-input").addEventListener("input", filterTable);
+    </script>
+</body>
+</html>
